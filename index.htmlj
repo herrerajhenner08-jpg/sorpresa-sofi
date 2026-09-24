@@ -1,0 +1,323 @@
+
+
+# ==============================
+# VENTANA
+# ==============================
+
+ventana = tk.Tk()
+ventana.title("Una sorpresa para Sofi ❤️")
+ventana.geometry("900x700")
+ventana.configure(bg="#ffd6e5")
+
+canvas = tk.Canvas(
+    ventana,
+    width=900,
+    height=700,
+    bg="#ffd6e5",
+    highlightthickness=0
+)
+canvas.pack(fill="both", expand=True)
+
+# ==============================
+# PANTALLA INICIAL
+# ==============================
+
+def pantalla_inicial():
+
+    canvas.delete("all")
+
+    canvas.create_text(
+        450, 180,
+        text="💌",
+        font=("Arial", 70),
+        fill="#d00032"
+    )
+
+    canvas.create_text(
+        450, 280,
+        text="Mira, es una sorpresa",
+        font=("Arial", 34, "bold"),
+        fill="#a8002b"
+    )
+
+    canvas.create_text(
+        450, 330,
+        text="para ti, Sofi ❤️",
+        font=("Arial", 34, "bold"),
+        fill="#c00035"
+    )
+
+    canvas.create_text(
+        450, 390,
+        text="Tengo algo muy especial para ti...",
+        font=("Arial", 18),
+        fill="#7d2943"
+    )
+
+    boton = tk.Button(
+        ventana,
+        text="🎁  ABRIR SORPRESA  🎁",
+        font=("Arial", 17, "bold"),
+        bg="#c90035",
+        fg="white",
+        activebackground="#ff1744",
+        activeforeground="white",
+        padx=25,
+        pady=12,
+        bd=0,
+        cursor="hand2",
+        command=mostrar_ramos
+    )
+
+    canvas.create_window(
+        450, 480,
+        window=boton
+    )
+
+
+# ==============================
+# CORAZÓN
+# ==============================
+
+def dibujar_corazon(x, y, tam, color="#d00032"):
+
+    puntos = []
+
+    for t in range(0, 361, 2):
+
+        angulo = math.radians(t)
+
+        xx = 16 * math.sin(angulo) ** 3
+        yy = (
+            13 * math.cos(angulo)
+            - 5 * math.cos(2 * angulo)
+            - 2 * math.cos(3 * angulo)
+            - math.cos(4 * angulo)
+        )
+
+        puntos.append(
+            (
+                x + xx * tam / 16,
+                y - yy * tam / 16
+            )
+        )
+
+    canvas.create_polygon(
+        puntos,
+        fill=color,
+        outline=""
+    )
+
+
+# ==============================
+# FLOR ROJA
+# ==============================
+
+def dibujar_flor(x, y, escala=1):
+
+    colores = [
+        "#d00032",
+        "#e0003b",
+        "#ff1744",
+        "#b8002d"
+    ]
+
+    color = random.choice(colores)
+
+    # TALLO
+    canvas.create_line(
+        x,
+        y + 20 * escala,
+        x,
+        y + 170 * escala,
+        fill="#258b38",
+        width=int(7 * escala)
+    )
+
+    # HOJAS
+    canvas.create_oval(
+        x - 55 * escala,
+        y + 90 * escala,
+        x + 5 * escala,
+        y + 125 * escala,
+        fill="#329447",
+        outline=""
+    )
+
+    canvas.create_oval(
+        x - 5 * escala,
+        y + 115 * escala,
+        x + 55 * escala,
+        y + 150 * escala,
+        fill="#267d38",
+        outline=""
+    )
+
+    # PÉTALOS
+    posiciones = [
+        (0, -35),
+        (30, -15),
+        (25, 20),
+        (0, 35),
+        (-30, 20),
+        (-30, -15)
+    ]
+
+    for px, py in posiciones:
+
+        canvas.create_oval(
+            x + (px - 32) * escala,
+            y + (py - 32) * escala,
+            x + (px + 32) * escala,
+            y + (py + 32) * escala,
+            fill=color,
+            outline="#9c0028",
+            width=2
+        )
+
+    # CENTRO
+    canvas.create_oval(
+        x - 22 * escala,
+        y - 22 * escala,
+        x + 22 * escala,
+        y + 22 * escala,
+        fill="#ffd21c",
+        outline="#b88600",
+        width=2
+    )
+
+
+# ==============================
+# RAMO
+# ==============================
+
+def dibujar_ramo(cx, cy, escala=1):
+
+    # Flores grandes
+    posiciones = [
+        (-100, 20),
+        (-50, -30),
+        (0, -55),
+        (50, -30),
+        (100, 20),
+        (-70, 60),
+        (0, 40),
+        (70, 60)
+    ]
+
+    for x, y in posiciones:
+
+        dibujar_flor(
+            cx + x * escala,
+            cy + y * escala,
+            escala
+        )
+
+    # Papel del ramo
+    canvas.create_polygon(
+        cx - 145 * escala,
+        cy + 160 * escala,
+        cx + 145 * escala,
+        cy + 160 * escala,
+        cx + 85 * escala,
+        cy + 330 * escala,
+        cx - 85 * escala,
+        cy + 330 * escala,
+        fill="#f09ab5",
+        outline="#d46d8e",
+        width=3
+    )
+
+    # Cinta
+    canvas.create_rectangle(
+        cx - 18 * escala,
+        cy + 215 * escala,
+        cx + 18 * escala,
+        cy + 290 * escala,
+        fill="#c90035",
+        outline=""
+    )
+
+    # Corazones alrededor
+    dibujar_corazon(
+        cx - 150 * escala,
+        cy + 20 * escala,
+        15 * escala
+    )
+
+    dibujar_corazon(
+        cx + 150 * escala,
+        cy + 20 * escala,
+        15 * escala
+    )
+
+
+# ==============================
+# MOSTRAR TODOS LOS RAMOS
+# ==============================
+
+def mostrar_ramos():
+
+    canvas.delete("all")
+
+    canvas.configure(bg="#ffd6e5")
+
+    canvas.create_text(
+        450, 45,
+        text="❤️ PARA TI, SOFI ❤️",
+        font=("Arial", 30, "bold"),
+        fill="#b0002e"
+    )
+
+    canvas.create_text(
+        450, 85,
+        text="Un enorme ramo para una persona especial 🌹",
+        font=("Arial", 16),
+        fill="#7d2941"
+    )
+
+    # RAMO IZQUIERDO
+    dibujar_ramo(
+        200, 210, 0.65
+    )
+
+    # RAMO CENTRAL GRANDE
+    dibujar_ramo(
+        450, 180, 0.85
+    )
+
+    # RAMO DERECHO
+    dibujar_ramo(
+        700, 210, 0.65
+    )
+
+    # Corazones flotando
+    corazones = [
+        (90, 130, 18),
+        (150, 550, 16),
+        (300, 120, 13),
+        (600, 125, 17),
+        (760, 540, 18),
+        (820, 180, 13),
+        (100, 400, 12),
+        (800, 390, 15)
+    ]
+
+    for x, y, tam in corazones:
+        dibujar_corazon(x, y, tam)
+
+    canvas.create_text(
+        450, 640,
+        text="🌹🌹🌹 Con mucho cariño para ti, Sofi 🌹🌹🌹",
+        font=("Arial", 20, "bold"),
+        fill="#a8002b"
+    )
+
+
+# ==============================
+# INICIAR
+# ==============================
+
+pantalla_inicial()
+
+ventana.mainloop()
