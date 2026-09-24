@@ -1,0 +1,567 @@
+import tkinter as tk
+import random
+import math
+
+# =========================================================
+# VENTANA
+# =========================================================
+
+ventana = tk.Tk()
+ventana.title("Sorpresa para Sofi ❤️")
+ventana.geometry("1000x750")
+ventana.configure(bg="#ffd6e5")
+ventana.resizable(False, False)
+
+canvas = tk.Canvas(
+    ventana,
+    width=1000,
+    height=750,
+    bg="#ffd6e5",
+    highlightthickness=0
+)
+canvas.pack()
+
+# =========================================================
+# VARIABLES
+# =========================================================
+
+animando = False
+tiempo = 0
+
+
+# =========================================================
+# CORAZÓN
+# =========================================================
+
+def crear_corazon(x, y, tamaño, color="#d00032"):
+
+    puntos = []
+
+    for i in range(0, 361, 3):
+
+        t = math.radians(i)
+
+        px = 16 * math.sin(t) ** 3
+        py = (
+            13 * math.cos(t)
+            - 5 * math.cos(2*t)
+            - 2 * math.cos(3*t)
+            - math.cos(4*t)
+        
+        puntos.append(
+            (
+                x + px * tamaño / 16,
+                y - py * tamaño / 16
+            )
+        )
+
+    canvas.create_polygon(
+        puntos,
+        fill=color,
+        outline=""
+    )
+
+
+# =========================================================
+# PANTALLA INICIAL
+# =========================================================
+
+def pantalla_inicial():
+
+    canvas.delete("all")
+    canvas.configure(bg="#ffd6e5")
+
+    crear_corazon(500, 180, 80)
+
+    canvas.create_text(
+        500,
+        300,
+        text="Mira, es una sorpresa",
+        fill="#a8002e",
+        font=("Arial", 38, "bold")
+    )
+
+    canvas.create_text(
+        500,
+        350,
+        text="para ti, Sofi ❤️",
+        fill="#c00035",
+        font=("Arial", 38, "bold")
+    )
+
+    canvas.create_text(
+        500,
+        405,
+        text="Preparé algo muy especial...",
+        fill="#7d2941",
+        font=("Arial", 20)
+    )
+
+    boton = tk.Button(
+        ventana,
+        text="🎁  ABRIR SORPRESA  🎁",
+        font=("Arial", 18, "bold"),
+        bg="#c90035",
+        fg="white",
+        activebackground="#ff1744",
+        activeforeground="white",
+        relief="flat",
+        padx=25,
+        pady=12,
+        cursor="hand2",
+        command=abrir_sorpresa
+    )
+
+    canvas.create_window(
+        500,
+        490,
+        window=boton
+    )
+
+
+# =========================================================
+# FLOR
+# =========================================================
+
+def crear_flor(x, y, tamaño=1):
+
+    color = random.choice([
+        "#d00032",
+        "#e0003b",
+        "#ff1744",
+        "#b8002d"
+    ])
+
+    # TALLO
+
+    canvas.create_line(
+        x,
+        y + 40*tamaño,
+        x,
+        y + 230*tamaño,
+        fill="#258a38",
+        width=int(7*tamaño)
+    )
+
+    # HOJAS
+
+    canvas.create_oval(
+        x - 65*tamaño,
+        y + 130*tamaño,
+        x,
+        y + 165*tamaño,
+        fill="#319447",
+        outline=""
+    )
+
+    canvas.create_oval(
+        x,
+        y + 165*tamaño,
+        x + 65*tamaño,
+        y + 200*tamaño,
+        fill="#287e39",
+        outline=""
+    )
+
+    # PÉTALOS
+
+    posiciones = [
+        (0, -35),
+        (32, -12),
+        (28, 25),
+        (0, 40),
+        (-28, 25),
+        (-32, -12)
+    ]
+
+    for px, py in posiciones:
+
+        canvas.create_oval(
+            x + (px-35)*tamaño,
+            y + (py-35)*tamaño,
+            x + (px+35)*tamaño,
+            y + (py+35)*tamaño,
+            fill=color,
+            outline="#980027",
+            width=2
+        )
+
+    # CENTRO
+
+    canvas.create_oval(
+        x - 23*tamaño,
+        y - 23*tamaño,
+        x + 23*tamaño,
+        y + 23*tamaño,
+        fill="#ffd21c",
+        outline="#a87500",
+        width=3
+    )
+
+
+# =========================================================
+# RAMO
+# =========================================================
+
+def crear_ramo(cx, cy, escala=1):
+
+    posiciones = [
+        (-95, 0),
+        (-45, -45),
+        (0, -65),
+        (45, -45),
+        (95, 0),
+        (-65, 55),
+        (0, 40),
+        (65, 55)
+    ]
+
+    for x, y in posiciones:
+
+        crear_flor(
+            cx + x*escala,
+            cy + y*escala,
+            escala
+        )
+
+    # PAPEL
+
+    canvas.create_polygon(
+        cx - 150*escala,
+        cy + 190*escala,
+
+        cx + 150*escala,
+        cy + 190*escala,
+
+        cx + 90*escala,
+        cy + 350*escala,
+
+        cx - 90*escala,
+        cy + 350*escala,
+
+        fill="#ed9db5",
+        outline="#c96c8a",
+        width=3
+    )
+
+    # CINTA
+
+    canvas.create_rectangle(
+        cx - 20*escala,
+        cy + 250*escala,
+        cx + 20*escala,
+        cy + 320*escala,
+        fill="#c90035",
+        outline=""
+    )
+
+
+# =========================================================
+# MUCHOS CORAZONES
+# =========================================================
+
+corazones = []
+
+def crear_corazones():
+
+    for i in range(25):
+
+        x = random.randint(30, 970)
+        y = random.randint(100, 700)
+
+        tamaño = random.randint(8, 18)
+
+        corazones.append({
+            "x": x,
+            "y": y,
+            "t": tamaño,
+            "vel": random.uniform(0.5, 1.8)
+        })
+
+
+def animar_corazones():
+
+    if not animando:
+        return
+
+    # Crear corazones nuevamente
+    crear_corazones()
+
+    for c in corazones:
+
+        c["y"] -= c["vel"]
+
+        crear_corazon(
+            c["x"],
+            c["y"],
+            c["t"],
+            "#d00032"
+        )
+
+    if animando:
+
+        ventana.after(
+            100,
+            animar_corazones
+        )
+
+
+# =========================================================
+# MOSTRAR RAMOS
+# =========================================================
+
+def mostrar_ramos():
+
+    global animando
+
+    canvas.delete("all")
+    canvas.configure(bg="#ffd6e5")
+
+    canvas.create_text(
+        500,
+        45,
+        text="❤️ PARA TI, SOFI ❤️",
+        fill="#a8002e",
+        font=("Arial", 32, "bold")
+    )
+
+    canvas.create_text(
+        500,
+        85,
+        text="🌹 Un enorme ramo para ti 🌹",
+        fill="#7d2941",
+        font=("Arial", 18)
+    )
+
+    # RAMO IZQUIERDO
+
+    crear_ramo(
+        180,
+        240,
+        0.65
+    )
+
+    # RAMO CENTRAL GRANDE
+
+    crear_ramo(
+        500,
+        190,
+        0.90
+    )
+
+    # RAMO DERECHO
+
+    crear_ramo(
+        820,
+        240,
+        0.65
+    )
+
+    # Corazones
+
+    animando = True
+    animar_corazones()
+
+    # Después de 9 segundos
+    ventana.after(
+        9000,
+        efecto_virus
+    )
+
+
+# =========================================================
+# ABRIR SORPRESA
+# =========================================================
+
+def abrir_sorpresa():
+
+    canvas.delete("all")
+
+    # Animación de entrada
+
+    canvas.create_text(
+        500,
+        320,
+        text="❤️",
+        font=("Arial", 100)
+    )
+
+    canvas.create_text(
+        500,
+        430,
+        text="Preparando tu sorpresa...",
+        fill="#a8002e",
+        font=("Arial", 24, "bold")
+    )
+
+    ventana.after(
+        1800,
+        mostrar_ramos
+    )
+
+
+# =========================================================
+# EFECTO VIRUS VISUAL
+# =========================================================
+
+def efecto_virus():
+
+    global animando
+
+    animando = False
+
+    canvas.delete("all")
+    canvas.configure(bg="#050505")
+
+    escribir_codigo()
+
+
+def escribir_codigo():
+
+    canvas.delete("all")
+
+    canvas.create_text(
+        500,
+        60,
+        text="SYSTEM LOVE.EXE",
+        fill="#00ff66",
+        font=("Courier", 28, "bold")
+    )
+
+    textos = [
+        "SYSTEM_START...",
+        "Loading surprise...",
+        "████████████████ 100%",
+        "LOVE_SYSTEM.exe",
+        "Searching...",
+        "SOFI_FOUND ❤️",
+        "WARNING...",
+        "Too much love detected",
+        "HEART.exe running...",
+        "LOVE_MODE = TRUE",
+        "❤️ ❤️ ❤️ ❤️ ❤️"
+    ]
+
+    y = 120
+
+    for texto in textos:
+
+        canvas.create_text(
+            30,
+            y,
+            anchor="w",
+            text=texto,
+            fill="#00ff66",
+            font=("Courier", 16)
+        )
+
+        y += 42
+
+    # Ventanas falsas
+
+    canvas.create_rectangle(
+        90,
+        500,
+        410,
+        650,
+        fill="#111111",
+        outline="#ff1744",
+        width=3
+    )
+
+    canvas.create_text(
+        250,
+        555,
+        text="⚠️ WARNING ⚠️",
+        fill="#ff1744",
+        font=("Courier", 20, "bold")
+    )
+
+    canvas.create_text(
+        250,
+        605,
+        text="Demasiado cariño ❤️",
+        fill="white",
+        font=("Courier", 14)
+    )
+
+    canvas.create_rectangle(
+        590,
+        500,
+        910,
+        650,
+        fill="#111111",
+        outline="#ff1744",
+        width=3
+    )
+
+    canvas.create_text(
+        750,
+        555,
+        text="SOFI.EXE",
+        fill="#ff1744",
+        font=("Courier", 22, "bold")
+    )
+
+    canvas.create_text(
+        750,
+        605,
+        text="FOUND ❤️",
+        fill="white",
+        font=("Courier", 18)
+    )
+
+    ventana.after(
+        3500,
+        mensaje_final
+    )
+
+
+# =========================================================
+# MENSAJE FINAL
+# =========================================================
+
+def mensaje_final():
+
+    canvas.delete("all")
+    canvas.configure(bg="#8b0025")
+
+    crear_corazon(
+        500,
+        210,
+        100,
+        "#ff1744"
+    )
+
+    canvas.create_text(
+        500,
+        380,
+        text="TE QUIERO",
+        fill="white",
+        font=("Arial", 70, "bold")
+    )
+
+    canvas.create_text(
+        500,
+        450,
+        text="MUCHÍSIMO, SOFI ❤️",
+        fill="#ffd6e5",
+        font=("Arial", 30, "bold")
+    )
+
+    canvas.create_text(
+        500,
+        510,
+        text="🌹 Esta sorpresa es solamente para ti 🌹",
+        fill="white",
+        font=("Arial", 20)
+    )
+
+
+# =========================================================
+# INICIAR
+# =========================================================
+
+pantalla_inicial()
+
+ventana.mainloop()
